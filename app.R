@@ -8,11 +8,11 @@
 #
 
 library(shiny)
-library(shinyWidgets)
-library(httr)
-library(tidyverse)
-library(devtools)
-library(DT)
+#library(shinyWidgets)
+#library(httr)
+#library(tidyverse)
+#library(devtools)
+#library(DT)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
