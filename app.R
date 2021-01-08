@@ -8,7 +8,7 @@
 #
 
 library(shiny)
-#library(shinyWidgets)
+library(shinyWidgets)
 #library(httr)
 #library(tidyverse)
 #library(devtools)
