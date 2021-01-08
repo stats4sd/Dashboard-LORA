@@ -9,7 +9,7 @@
 
 library(shiny)
 library(shinyWidgets)
-#library(httr)
+library(httr)
 #library(tidyverse)
 #library(devtools)
 #library(DT)
