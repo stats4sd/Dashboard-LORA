@@ -120,7 +120,7 @@ library(shiny)
 
 ui <- fluidPage(
     
-    titlePanel("LORI data collection quality control"),
+    titlePanel("LORA data collection monitoring dashboard"),
     
     sidebarLayout(
         sidebarPanel(
