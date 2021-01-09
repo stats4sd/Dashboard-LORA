@@ -27,7 +27,7 @@ url_midline <-"https://kc.humanitarianresponse.info/api/v1/data/691626.csv"
 url_backcheck <-"https://kc.humanitarianresponse.info/api/v1/data/701627.csv"
 
 
-backcheck_keep <- c("index", "agency",
+backcheck_keep <- c("index", "survey_agency",
                     "district_bl", "name_call_back")
 
 backcheck_var <- c("Telephone_Number",
@@ -40,7 +40,7 @@ backcheck_var <- c("Telephone_Number",
 backcheck_keep <- paste0(backcheck_keep,".s")
 backcheck_var <- paste0(backcheck_var,".s")
 
-midline_keep <- c("index", "agency", "State",
+midline_keep <- c("index", "survey_agency", "State",
                   "District", "username",
                   "gps_location", "_gps_location_latitude", "_gps_location_longitude",
                   "_gps_location_altitude", "_gps_location_precision", "Respondent_name", "start", "CompletionDateTime", "interviewDuration",
@@ -55,7 +55,7 @@ midline_var <- c( "PhoneNumber",
                   "csi_score")
 midline_keep <- paste0(midline_keep,".m")
 midline_var <- paste0(midline_var,".m")
-varshown <- c("percentMatch", "index.m", "agency.m","username.m", "start.m", "CompletionDateTime.m","interviewDuration.m", "nbDontknow.m",
+varshown <- c("percentMatch", "index.m", "survey_agency.m","username.m", "start.m", "CompletionDateTime.m","interviewDuration.m", "nbDontknow.m",
               "State.m","District.m", c(rbind(midline_var, backcheck_var)))
 allvars <- c("percentMatch",midline_keep, midline_var, backcheck_keep, backcheck_var)
 
@@ -108,7 +108,7 @@ get_data <- function(login, password){
     if(length(d_midline)>1 & length(d_midline)>1){
         midline <- as.data.frame(d_midline)
         colnames(midline) <-gsub(".*/","",colnames(midline))
-        midline$agency[is.na(midline$agency)] <- "-"
+        midline$survey_agency[is.na(midline$survey_agency)] <- "-"
         midline$username[is.na(midline$username)] <- "-"
         backcheck <- as.data.frame(d_backcheck)
         colnames(backcheck) <-gsub(".*/","",colnames(backcheck))
@@ -125,9 +125,9 @@ ui <- fluidPage(
     sidebarLayout(
         sidebarPanel(
             actionButton("load_data", "Load data"),
-            #selectInput("summary_by", "Choose focus of quality summary table", c("agency.m", "username.m"), multiple = TRUE),
-            pickerInput("summary_by", "Summary by (top table)", c("agency.m", "username.m"), selected = c("agency.m"), multiple = TRUE),
-            pickerInput("filter_agency", "Filter agency partner",sort(unique(listData()$agency.m), na.last=TRUE),selected = unique(listData()$agency.m),options = list(`actions-box` = TRUE), multiple = T),
+            #selectInput("summary_by", "Choose focus of quality summary table", c("survey_agency.m", "username.m"), multiple = TRUE),
+            pickerInput("summary_by", "Summary by (top table)", c("survey_agency.m", "username.m"), selected = c("survey_agency.m"), multiple = TRUE),
+            pickerInput("filter_agency", "Filter agency partner",sort(unique(listData()$survey_agency.m), na.last=TRUE),selected = unique(listData()$survey_agency.m),options = list(`actions-box` = TRUE), multiple = T),
             pickerInput("filter_username", "Filter username",sort(unique(listData()$username.m), na.last=TRUE),selected=unique(listData()$username.m),options = list(`actions-box` = TRUE), multiple = T),
             h5("For bottom table:"),
             sliderInput("dontknow_threshold",
@@ -181,14 +181,14 @@ server <- function(input, output, session) {
     observeEvent(input$submit, {
         data$check <- get_data(isolate(input$login), isolate(input$password))
         removeModal()
-        updatePickerInput(session, "filter_agency", choices = sort(unique((data$check)$agency.m), na.last=TRUE),selected = unique((data$check)$agency.m))
+        updatePickerInput(session, "filter_agency", choices = sort(unique((data$check)$survey_agency.m), na.last=TRUE),selected = unique((data$check)$survey_agency.m))
     })
     
     
     # update list of usernames
     updatedChoices = reactive({
         filtered_data <- isolate(data$check) %>%
-            filter(agency.m %in% input$filter_agency)
+            filter(survey_agency.m %in% input$filter_agency)
         enum_choices <- filtered_data %>%
             pull(username.m) %>% unique() %>% sort(na.last=TRUE)
         tmp<-list(enum_choices)
@@ -210,7 +210,7 @@ server <- function(input, output, session) {
         #      footer = NULL
         #    ))
         isolate(data$check) %>%
-            filter(agency.m%in%input$filter_agency,
+            filter(survey_agency.m%in%input$filter_agency,
                    username.m %in% input$filter_username)%>%
             group_by_at(vars(input$summary_by))%>%
             summarise(N=sum(!is.na(index.m), na.rm=T),
@@ -237,7 +237,7 @@ server <- function(input, output, session) {
             #filter(reasonableDuration.m<=input$duration_threshold | is.na(input$duration_threshold))%>%
             
             filter(username.m %in% input$filter_username,
-                   agency.m%in%input$filter_agency)%>%
+                   survey_agency.m%in%input$filter_agency)%>%
             .[,varshown]
     })
     
