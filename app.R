@@ -71,7 +71,7 @@ prepareData <- function(midline, backcheck){
     backcheck$csi_score <- as.numeric(backcheck$csiLess)+ as.numeric(backcheck$csiBorrow)+ as.numeric(backcheck$csiReduce)+ as.numeric(backcheck$csiAdult)+ as.numeric(backcheck$csiFewer)
     midline$csi_score <- as.numeric(midline$csiLess)+ as.numeric(midline$csiBorrow)+ as.numeric(midline$csiReduce)+ as.numeric(midline$csiAdult)+ as.numeric(midline$csiFewer)
     midline$interviewDuration <- difftime(midline$CompletionDateTime, midline$start, units='mins')
-    midline$interviewDuringDay <- between(format(midline$start, format="%H%M%S"),70000, 190000)
+    midline$interviewDuringDay <- between(format(midline$start, format="%H%M%S"),40000, 160000)
     midline$reasonableDuration <- between(midline$interviewDuration, 30, 90)
     midline$nbDontknow <- apply(midline,1,function(x) sum(x=="dontknow", na.rm=T))
     
