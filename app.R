@@ -28,10 +28,10 @@ url_backcheck <-"https://kc.humanitarianresponse.info/api/v1/data/701627.csv"
 
 
 backcheck_keep <- c("index", "survey_agency",
-                    "district_bl", "name_call_back")
+                    "district_bl", "name_call_back","displacement_status")
 
 backcheck_var <- c("Telephone_Number",
-                   "head_hh_yn", "displacement_status",
+                   "head_hh_yn", 
                    "move_plan_12mths", "MealsEatPerDay",
                    "shelter_type", "electric_hh_yn", "HH_size", 
                    "males_gte_18", "females_gte_18", "edu_level_hh",
@@ -44,9 +44,9 @@ midline_keep <- c("index", "survey_agency", "State",
                   "District", "username",
                   "gps_location", "_gps_location_latitude", "_gps_location_longitude",
                   "_gps_location_altitude", "_gps_location_precision", "Respondent_name", "start", "CompletionDateTime", "interviewDuration",
-                  "interviewDuringDay", "reasonableDuration", "nbDontknow")
+                  "interviewDuringDay", "reasonableDuration", "nbDontknow", "DisplacementStatus_Full")
 midline_var <- c( "PhoneNumber",
-                  "QuHeadOfHH", "DisplacementStatus_Full",
+                  "QuHeadOfHH", 
                   "MovePlan", "MealsEatPerDay",
                   "ShelterType", "ElectricityAccess", "hh_size", 
                   "Male_18_plus_years_old", "Female_18_plus_years_old", "Highest_Head_Secular_Education",
@@ -56,7 +56,7 @@ midline_var <- c( "PhoneNumber",
 midline_keep <- paste0(midline_keep,".m")
 midline_var <- paste0(midline_var,".m")
 varshown <- c("percentMatch", "index.m", "survey_agency.m","username.m", "start.m", "CompletionDateTime.m","interviewDuration.m", "nbDontknow.m",
-              "State.m","District.m", c(rbind(midline_var, backcheck_var)))
+              "State.m","District.m", "DisplacementStatus_Full.m","displacement_status.s", c(rbind(midline_var, backcheck_var)))
 allvars <- c("percentMatch",midline_keep, midline_var, backcheck_keep, backcheck_var)
 
 listData <- function(){
@@ -126,7 +126,7 @@ ui <- fluidPage(
         sidebarPanel(
             actionButton("load_data", "Load data"),
             #selectInput("summary_by", "Choose focus of quality summary table", c("survey_agency.m", "username.m"), multiple = TRUE),
-            pickerInput("summary_by", "Summary by (top table)", c("survey_agency.m", "username.m"), selected = c("survey_agency.m"), multiple = TRUE),
+            pickerInput("summary_by", "Summary by (top table)", c("survey_agency.m", "District.m", "username.m"), selected = c("survey_agency.m"), multiple = TRUE),
             pickerInput("filter_agency", "Filter agency partner",sort(unique(listData()$survey_agency.m), na.last=TRUE),selected = unique(listData()$survey_agency.m),options = list(`actions-box` = TRUE), multiple = T),
             pickerInput("filter_username", "Filter username",sort(unique(listData()$username.m), na.last=TRUE),selected=unique(listData()$username.m),options = list(`actions-box` = TRUE), multiple = T),
             h5("For bottom table:"),
