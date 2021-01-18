@@ -41,7 +41,7 @@ backcheck_keep <- paste0(backcheck_keep,".s")
 backcheck_var <- paste0(backcheck_var,".s")
 
 midline_keep <- c("index", "survey_agency", "State",
-                  "District", "username",
+                  "District", "username", "phonenumber_enumerator", "deviceid",
                   "gps_location", "_gps_location_latitude", "_gps_location_longitude",
                   "_gps_location_altitude", "_gps_location_precision", "Respondent_name", "date","start", "CompletionDateTime", "interviewDuration",
                   "interviewDuringDay", "reasonableDuration", "nbDontknow",  "DisplacementStatus_Full")
@@ -55,7 +55,7 @@ midline_var <- c( "PhoneNumber",
                   "csi_score")
 midline_keep <- paste0(midline_keep,".m")
 midline_var <- paste0(midline_var,".m")
-varshown <- c("percentMatch", "index.m", "survey_agency.m","username.m", "date.m", "start.m", "CompletionDateTime.m","interviewDuration.m", "nbDontknow.m",
+varshown <- c("percentMatch", "index.m", "survey_agency.m","username.m",  "phonenumber_enumerator.m", "deviceid.m", "date.m", "start.m", "CompletionDateTime.m","interviewDuration.m", "nbDontknow.m",
               "State.m","District.m", "DisplacementStatus_Full.m","displacement_status.s", c(rbind(midline_var, backcheck_var)))
 allvars <- c("percentMatch",midline_keep, midline_var, backcheck_keep, backcheck_var)
 
