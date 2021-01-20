@@ -86,12 +86,13 @@ prepareData <- function(midline, backcheck){
     
     for(i in 1:length(backcheck_var)){
         isItDifferent <- ifelse(data_check[,backcheck_var[i]]!=data_check[,midline_var[i]], 1, 0)
-        if(backcheck_var[i] %in% c("age_years", "HH_size")){
+        if(backcheck_var[i] %in% c("age_years.s", "HH_size.s")){
             isItDifferent <- (abs(data_check[,backcheck_var[i]]-data_check[,midline_var[i]])) > 1
-        }else if(backcheck_var[i]=="csi_score"){
+        }else if(backcheck_var[i]=="csi_score.s"){
             isItDifferent <- (abs(data_check[,backcheck_var[i]]-data_check[,midline_var[i]])) > 3
+        }else if(backcheck_var[i]=="Telephone_Number.s"){
+            isItDifferent <- (str_sub(data_check[,backcheck_var[i]], start= -8)!=str_sub(data_check[,midline_var[i]], start=-8))
         }
-        
         data_check$qualScore <- data_check$qualScore + ifelse(is.na(isItDifferent), .5, isItDifferent)
     }
     
