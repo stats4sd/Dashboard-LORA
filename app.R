@@ -44,7 +44,7 @@ midline_keep <- c("index", "survey_agency", "State",
                   "District", "username", "phonenumber_enumerator", "deviceid",
                   "gps_location", "_gps_location_latitude", "_gps_location_longitude",
                   "_gps_location_altitude", "_gps_location_precision", "Respondent_name", "date","start", "CompletionDateTime", "interviewDuration",
-                  "interviewDuringDay", "reasonableDuration", "nbDontknow",  "DisplacementStatus_Full")
+                  "interviewDuringDay", "interviewDuration","veryshort", "short", "reasonableDuration", "nbDontknow",  "DisplacementStatus_Full")
 midline_var <- c( "PhoneNumber",
                   "QuHeadOfHH", 
                   "MovePlan", "MealsEatPerDay",
@@ -73,6 +73,8 @@ prepareData <- function(midline, backcheck){
     midline$interviewDuration <- difftime(midline$CompletionDateTime, midline$start, units='mins')
     midline$interviewDuringDay <- between(format(midline$start, format="%H%M%S"),40000, 160000)
     midline$reasonableDuration <- between(midline$interviewDuration, 30, 90)
+    midline$short <- between(midline$interviewDuration, 25, 30)
+    midline$veryshort <- midline$interviewDuration<25
     midline$nbDontknow <- apply(midline,1,function(x) sum(x=="dontknow", na.rm=T))
     midline$date <- format(midline$start, "%m-%d")
     
@@ -226,7 +228,10 @@ server <- function(input, output, session) {
             group_by_at(vars(input$summary_by))%>%
             summarise(N=sum(!is.na(index.m), na.rm=T),
                       time_ok=mean(interviewDuringDay.m, na.rm=TRUE),
-                      duration_ok = mean(reasonableDuration.m, na.rm=TRUE),
+                      avg_duration = mean(interviewDuration.m, na.rm=TRUE),
+                      `<25min`=mean(veryshort.m, na.rm=TRUE),
+                      `25-30min`=mean(short.m, na.rm=TRUE),
+                      `30-90min` = mean(reasonableDuration.m, na.rm=TRUE),
                       avg_dontknow = mean(nbDontknow.m),
                       N_backchecked=sum(!is.na(index.s), na.rm=T),
                       #prop_bc=sum(!is.na(index.s), na.rm=T)/sum(!is.na(index.m), na.rm=T),
@@ -258,9 +263,9 @@ server <- function(input, output, session) {
     # show the top table
     output$summary_table <- renderDataTable({
         datatable(summaryTable()) %>%
-            formatPercentage(c("avg_match_perc", "min_match_perc", "duration_ok", "time_ok"), 0)%>%
+            formatPercentage(c("avg_match_perc", "min_match_perc", "<25min", "25-30min", "30-90min", "time_ok"), 0)%>%
             #formatRound(c("prop"), 3)%>%
-            formatRound(c("avg_dontknow"), 1)
+            formatRound(c("avg_dontknow", "avg_duration"), 1)
     })
     
     # show the bottom table
